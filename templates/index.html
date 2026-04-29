@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network tracking tool</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  
+
+  <!-- MDB-->
+  <!--<link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+<body style="background-color: #fafafa;">
+<br><br>
+
+
+
+<div class="d-flex align-items-start bg-light mb-2 container" style="height: 100px;">
+  <div class="col-4">
+    
+      <div style="text-align: center; " class="container">
+          <div class="card text-center shadow-5-strong" style="padding: 1rem;">
+            <div class="card-body">
+              <form>
+                  <h3>Registrar datos de usuario de red</h3>
+
+                  <div class="form-outline mb-4" style="margin-top: 3rem;">
+                    <input type="text" id="user-name" class="form-control" />
+                    <label class="form-label" for="user-name">Nombre</label>
+                  </div>
+
+                  <div class="form-outline mb-4" style="margin-top: 1rem;">
+                    <input type="text" id="user-mac" class="form-control" />
+                    <label class="form-label" for="user-mac">MAC</label>
+                  </div>
+
+                  <div class="form-outline mb-4" style="margin-top: 1rem;">
+                    <input type="text" id="user-ip" class="form-control" />
+                    <label class="form-label" for="user-ip">IP (opcional)</label>
+                  </div>
+
+                  <!-- Submit button -->                  
+                    <button type="button" class="btn btn-primary" style="max-width: 15rem;" onclick="registerCode()">Registrar</button>        
+                </form>
+            </div>
+          </div>  
+      </div>
+
+  </div>
+  <div class="col-8">
+    
+
+      <div class="container">
+          <div class="card shadow-5-strong">
+            <div class="card-body">
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" style="font-weight: bold;">Nombre</th>
+                    <th scope="col" style="font-weight: bold;">MAC</th>
+                    <th scope="col" style="font-weight: bold;">IP</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% block content %}  
+                    {% for user in users %}
+                      <tr>
+                        <td>{{ user['Name'] }}</td>
+                        <td>
+                          <a href="/activity?h={{ user['Mac'] }}">{{ user['Mac'] }}</a>
+                        </td>
+                        <td>{{ user['Ip'] }}</td>
+                      </tr>
+
+                  {% endfor %}
+                {% endblock %}    
+                      
+                  
+                </tbody>
+              </table>
+
+            </div>
+          </div>  
+      </div>
+
+  </div>
+</div>
+
+
+
+
+
+        
+
+
+
+</body>  
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript">
+   function registerCode() {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('userName', $('#user-name').val());
+    formData.append('userMac', $('#user-mac').val());
+    formData.append('userIp', $('#user-ip').val());
+
+    $.ajax({
+       url: '/register-user',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+       } // success: function
+    });    
+    window.location.reload();
+  } // addToolTrick
+</script>

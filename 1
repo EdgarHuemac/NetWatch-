@@ -1,0 +1,10 @@
+from flask import Flask
+app = Flask(__name__)
+@app.rotue('/login')
+
+def login():
+    return 'this is login'
+
+
+if __name__ == '__main__':
+    app.run()

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacking roadmap</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/all.min.css') }}">
+
+
+  <!-- MDB-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/selecty.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+
+<br><br>
+<div class="container">
+  
+
+  <h1 style="color: #7C7C7C;">Your hacking roadmap</h1><br>
+
+        <div class="row" style="text-align: right; margin-bottom: 1.5rem;">
+
+          <div class="input-group rounded col-md">
+            <span class="input-group-text border-0" id="search-addon">
+              <i style="font-size: 22px;" class="fas fa-search"></i>
+            </span>
+            <input id="searchInput" style="max-width: 30rem;" type="search" spellcheck="false" class="searchInput form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+          </div>
+
+
+          <div class="col-md">  
+            <a class="btn btn-dark" style="margin-bottom: 5px; margin-top: 5px;" href="#!" onclick="newCtfModal.show();" role="button">
+              <i class="fas fa-plus"></i>
+              <span style="margin-left: 5px;">New CTF</span>
+            </a>
+          </div>  
+
+        </div>  
+
+        <table class="table align-middle mb-0 bg-white">
+          <thead class="thead bg-light">
+            <tr>
+              <th>Name</th>                            
+              <th>Used tools</th>
+              <th>Executed techniques</th>
+              <th>Description</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="matchKey">
+            
+          {% block content %}  
+            {% for ctf in ctfs %}
+            <tr id="ctf-{{ ctf['id'] }}">
+              <td>
+                <div class="d-flex align-items-center">
+                  <img id="ctf-image" 
+                      src="/static/img/{{ ctf['platform'] }}.JPG"
+                      alt=""
+                      style="width: 60px; height: 60px"
+                      class="rounded-circle"
+                      />
+                  <div class="ms-3">
+                    <p class="fw-bold mb-1 box-name" style="font-size: 18px;">
+                      {{ ctf['name'] }}
+                    </p>
+                    <p class="text-muted mb-0 box-platform" style="margin-top: -10px; font-size: 14px;">
+                      {{ ctf['platform'] }}
+                    </p>
+
+                    <span style="font-size: 12px;" class="badge badge-dark rounded-pill d-inline box-os">
+                      {{ ctf['os'] }}
+                    </span>
+
+                  </div>
+                </div>
+              </td>              
+
+
+              <td id="table-ctf-tools" class="box-tools">
+                {{ ctf['tools'] }}
+              </td>
+              
+              <td id="table-ctf-techniques" class="box-techniques">
+                {{ ctf['techniques'] }}                                
+              </td>
+
+              <td class="box-report-description">{{ ctf['ReportName'] }}</td>              
+              <td>
+                
+
+              <button onclick="window.open('/report/{{ ctf['id'] }}');" type="button" class="btn  btn-floating" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Consult report">
+                <i style="font-size: 16px;" class="fas fa-book-open"></i>
+              </button>                
+
+              <button type="button" onclick="getCtf('{{ ctf['id'] }}')" class="btn  btn-floating" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Edit CTF">
+                <i style="font-size: 16px;" class="fas fa-pen"></i>
+              </button>
+
+
+              <div class="dropdown">                        
+                <button class="btn btn-floating" type="button" id="dropdownDeleteBtn" data-mdb-toggle="dropdown" aria-expanded="false" data-mdb-placement="top" title="Delete CTF">
+                  <i style="font-size: 16px;" class="fas fa-trash"></i>                
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownDeleteBtn">
+                  
+                  <div style="padding: 10px;">
+                  <p>Are you sure you want to delete this CTF report?</p>  
+                    <a href="#!" style="margin-right: 10px;" onclick="deleteCtf('{{ ctf['id'] }}')">Delete</a>
+                    <a href="#!">Cancel</a>
+                  </div>
+                  
+                </div>
+
+              </div>
+
+
+              <button type="button" onclick="toolsAndTricks( '{{ ctf['id'] }}' )" class="btn  btn-floating" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Tools and tricks from this repport">
+                <i style="font-size: 16px;" class="fas fa-tools"></i>                
+              </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% endblock %}
+
+
+
+            
+
+          </tbody>
+        </table>
+
+
+
+
+
+  </div> <!-- Container -->
+
+
+<!-- New CTF Modal -->
+<div class="modal fade" id="new-ctf-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="coloredModal modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New CTF</h5>
+        <button type="button" style="background-color: gray !important;" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="container" style="padding: 2rem;">
+            <form>
+              <!-- 2 column grid layout with text inputs for the first and last names -->
+              <div class="row mb-4">
+                <div class="col">
+                  <div class="form-outline">
+                    <input type="text" spellcheck="false" id="ctf-name" class="form-control" />
+                    <label class="form-label" for="ctf-name">CTF Name</label>
+                  </div>
+                </div>
+                
+                <div class="col">
+                  <select name="cars" id="ctf-platform">
+                    <option value="" disabled selected>CTF Platform</option>
+                    <option value="HackTheBox">HackTheBox</option>
+                    <option value="TryHackMe">TryHackMe</option>
+                    <option value="PicoCTF">PicoCTF</option>
+                    <option value="Hacking Sports (UHC)">Hacking Sports (UHC)</option>
+                    <option value="CTFd">CTFd</option>
+                    <option value="RootTheBox">RootTheBox</option>
+                    <option value="Other">Other</option>
+                  </select> 
+                </div>
+
+                <div class="col">
+                  <select name="cars" id="ctf-os">
+                    <option value="" disabled selected>CTF Operarting system</option>
+                    <option value="Windows">Windows</option>
+                    <option value="Linux">Linux</option>
+                    <option value="Windows & Linux">Windows & Linux</option>
+                    <option value="Other">Other</option>
+                  </select> 
+                </div>
+
+              </div>
+            
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="ctf-tools" rows="3"></textarea>
+                <label class="form-label" for="ctf-tools">Used tools</label>
+              </div>
+
+              <br>
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="ctf-techniques" rows="3"></textarea>
+                <label class="form-label" for="ctf-techniques">Used techniques</label>
+              </div>
+
+
+              <br>
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="ctf-description" rows="3"></textarea>
+                <label class="form-label" for="ctf-description">CTF Description</label>
+              </div>
+
+                <br>              
+                <label style="margin-bottom: -5px; font-weight: bold;" class="form-label" for="customFile">
+                  PDF Report
+                </label>
+                <input type="file" placeholder="Select file" spellcheck="false" class="fileInput form-control" id="ctf-report" />              
+              
+            </form>
+         </div>   
+
+      </div>
+      <div class="modal-footer">        
+        <button id="saveCtfBtn" type="button" class="btn btn-dark" onclick="ctfUpload()">Save CTF</button>
+
+        <div id="loadingSpinner" style="display: none;" class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Update CTF Modal -->
+<div class="modal fade" id="updt-ctf-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="coloredModal modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updtExampleModalLabel">Update CTF</h5>
+        <button type="button" style="background-color: gray !important;" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="container" style="padding: 2rem;">
+            <form>
+              <!-- 2 column grid layout with text inputs for the first and last names -->
+              <div class="row mb-4">
+                <div class="col">
+                  <div class="form-outline">
+                    <input type="text" spellcheck="false" id="updt-ctf-name" class="form-control" />
+                    <label class="form-label" for="updt-ctf-name">CTF Name</label>
+                  </div>
+                </div>
+                
+
+                <div id="select-platform" class="col">
+                  <select name="updt-ctf-platform" id="updt-ctf-platform">
+                    <option value="" disabled selected>CTF Platform</option>
+                    <option value="HackTheBox">HackTheBox</option>
+                    <option value="TryHackMe">TryHackMe</option>
+                    <option value="PicoCTF">PicoCTF</option>
+                    <option value="Hacking Sports (UHC)">Hacking Sports (UHC)</option>
+                    <option value="CTFd">CTFd</option>
+                    <option value="RootTheBox">RootTheBox</option>
+                    <option value="Other">Other</option>
+                  </select> 
+                </div>
+
+                <div id="select-os" class="col">
+                  <select name="updt-ctf-os" id="updt-ctf-os">
+                    <option value="" disabled selected>CTF Operarting system</option>
+                    <option value="Windows">Windows</option>
+                    <option value="Linux">Linux</option>
+                    <option value="Windows & Linux">Windows & Linux</option>
+                    <option value="Other">Other</option>
+                  </select> 
+                </div>
+
+              </div>
+            
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="updt-ctf-tools" rows="3"></textarea>
+                <label class="form-label" for="updt-ctf-tools">Used tools</label>
+              </div>
+
+              <br>
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="updt-ctf-techniques" rows="3"></textarea>
+                <label class="form-label" for="updt-ctf-techniques">Used techniques</label>
+              </div>
+
+
+              <br>
+              <div class="form-outline">
+                <textarea class="form-control" spellcheck="false" id="updt-ctf-description" rows="3"></textarea>
+                <label class="form-label" for="updt-ctf-description">CTF Description</label>
+              </div>
+
+              <!--
+                <br>              
+                <label style="margin-bottom: -5px; font-weight: bold;" class="form-label" for="customFile">
+                  PDF Report
+                </label>
+                <input type="file" placeholder="Select file" spellcheck="false" class="fileInput form-control" id="updt-ctf-report" />              
+              -->
+
+            </form>
+         </div>   
+
+      </div>
+      <div class="modal-footer">        
+        <button id="updtCtfBtn" type="button" class="btn btn-dark" onclick="updateCtf()">Update CTF</button>
+
+        <div id="updtLoadingSpinner" style="display: none;" class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div
+  class="toast fade mx-auto"
+  id="basic-dark-example"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  data-mdb-autohide="true"
+  data-mdb-delay="2000"
+  data-mdb-position="top-right"
+  data-mdb-append-to-body="true"
+  data-mdb-stacking="true"
+  data-mdb-width="350px"
+  data-mdb-color="dark"
+>
+  <div class="toast-header text-white">
+    <strong class="me-auto">MDBootstrap</strong>
+    <small>11 mins ago</small>
+    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body text-white">Dark Basic Example</div>
+</div>
+
+
+
+
+<!-- Tools and tricks Modal -->
+<div class="modal fade" id="tools-tricks-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="coloredModal modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tools and tricks</h5>
+        <button type="button" style="background-color: gray !important;" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div style="padding: 2rem; padding-bottom: 0;">        
+        <p>
+          During any hack, pentest, CTF challenge or whatever hacking experience, there're always useful tricks that we learned through the hacking experience. You can easily document them here!  
+        </p>
+      </div>
+
+      <div class="modal-body">
+
+<div class="row">
+  <p class="clipboard-notification">Copied to clipboard!</p>
+  <div class="col-md" id="tool-trick-section" style="max-width: 45rem;">  
+
+
+    
+  </div>
+  <div class="col-md">
+    
+        <div class="container">            
+          <form id="toolsAndTricksForm">
+              
+              <div style="margin-top: 1rem; padding: 1rem; border-radius: 10px; background-color: #0d0d0d; border: 1px solid #292929">                                
+                <div>
+                  <div class="form-outline" style="text-align: right;">
+                    
+                    <textarea placeholder="Trick's description" class="form-control consolas" style="color: #009933 !important; font-weight: bold !important" spellcheck="false" id="tool-or-trick" rows="4"></textarea>
+                  </div>
+                </div>
+                <div class="form-outline" style="margin-top: 20px; ">
+                  <textarea placeholder="Trick's description" class="form-control" spellcheck="false" id="tool-trick-description" rows="4"></textarea>
+                  <label class="form-label" for="tool-trick-description">Description</label>
+                </div>
+              </div>
+
+          </form>
+
+          <div style="text-align: right; margin-top: 1rem;">
+            <button id="addToolTrickBtn" type="button" class="btn btn-dark" onclick="addToolTrick('')">Add tool / trick</button>
+          </div>  
+
+
+          <div style="text-align: right; margin-top: 1rem; display: none;">
+            <button id="addToolTrickBtn" type="button" 
+            style="background-color: gray !important; margin-right: 3rem;" class="btn btn-floating" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Add new tool or trick ">
+              <i style="font-size: 32px; width: 2rem;" class="fas fa-plus"></i>          
+            </button>
+          </div>
+
+
+        </div>
+
+  </div>
+</div>
+
+
+           
+
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/selecty.js') }}"></script>
+
+
+<script type="text/javascript">
+
+
+
+  $("#searchInput").on('keyup', function(){
+      var value = $(this).val().toLowerCase();
+      $("#matchKey tr").each(function () {          
+         
+        let boxName = this.querySelector('.box-name').innerText.toLowerCase();
+        let boxOS = this.querySelector('.box-os').innerText.toLowerCase();
+        let boxTools = this.querySelector('.box-tools').innerText.toLowerCase();
+        let boxDescription = this.querySelector('.box-report-description').innerText.toLowerCase();
+        let boxTechniques = this.querySelector('.box-techniques').innerText.toLowerCase();
+
+        
+          if (boxName.search(value) > -1 || boxOS.search(value) > -1 || boxTools.search(value) > -1 || boxDescription.search(value) > -1 || boxTechniques.search(value) > -1) {
+            $(this).show();
+            $(this).prev('.subjectName').last().show();
+         } else {
+            $(this).hide();
+         }
+
+      });      
+   })
+
+
+const wrapper = document.querySelector('#toolsAndTricksForm')
+const addFileInputButton = document.querySelector('#addToolTrickBtn')
+const fileUpload = (counter) => {
+  return `
+<div style="margin-top: 1rem; padding: 1rem; border-radius: 10px; background-color: #0d0d0d;">  
+
+  <div class="form-outline" style="text-align: right;">
+    <input id="form_id_variation_options-${counter}" placeholder="Command, oneliner or trick" class="consolas form-control" style="color: #009933 !important; font-weight: bold !important" spellcheck="false" id="tool-or-trick" />        
+  </div>
+
+  <div class="form-outline" style="margin-top: 20px;">
+    <textarea name="input" type="text" class="form-control form-control-lg" id="form_id_variation_options-${counter}" spellcheck="false"></textarea>    
+    <label class="form-label" for="tool-trick-description-${counter}">Description</label>
+  </div>
+
+</div>  
+`;
+}
+
+
+// Updates the Ctf
+function updateCtf(id) {
+    $('#updtLoadingSpinner').css('display', 'flex');
+    $('#updtCtfBtn').css('display', 'none');
+
+    // Appending data
+    var formData = new FormData();
+    formData.append('name', $('#updt-ctf-name').val());
+    formData.append('platform', $('#updt-ctf-platform').val());
+    formData.append('os', $('#updt-ctf-os').val());
+    formData.append('tools', $('#updt-ctf-tools').val());
+    formData.append('techniques', $('#updt-ctf-techniques').val());
+    formData.append('description', $('#updt-ctf-description').val());
+
+
+    // Display the key/value pairs
+    //for (var pair of formData.entries()) {
+    //    console.log(pair[0]+ ': ' + pair[1]); 
+    //}
+
+    $.ajax({
+       url: `/update-ctf/${id}`,
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          window.location.replace('/roadmap')
+       }
+    });
+    
+} // updateCtf
+
+
+
+// Retrieves CTF's information to be shown before updating it
+function getCtf(id) {
+  console.log(`Retrieving information of ctf with id = ${id}`);
+  $.ajax({
+       url: `/get-ctf/${id}`,
+       type: 'get',
+       contentType: false,
+       processData: false,
+       success: function(response) {        
+          // console.log(response[1]);
+          $('#updt-ctf-name').val(response['0'][1]);
+          $("label[for='updt-ctf-name']").addClass('active');
+          
+          $('#updt-ctf-platform').val(response['0'][2]);
+          $('#select-platform .selecty-selected').text(response['0'][2]);
+
+          $('#updt-ctf-os').val(response['0'][3]);
+          $('#select-os .selecty-selected').text(response['0'][3]);
+          
+          $('#updt-ctf-tools').val(response['0'][4]);
+          $("label[for='updt-ctf-tools']").addClass('active');
+
+          $('#updt-ctf-techniques').val(response['0'][5]);
+          $("label[for='updt-ctf-techniques']").addClass('active');
+
+          $('#updt-ctf-description').val(response['0'][6]);
+          $("label[for='updt-ctf-description']").addClass('active');
+      
+          // Finally, we set the CTF's to the button that will trigger the update action
+          $('#updtCtfBtn').attr('onClick', `updateCtf('${id}')`);
+
+
+       } // success: function
+    }); // ajax
+  updateCtfModal.show();
+}
+
+
+
+
+function deleteCtf(ctfId) {
+    // Frontend logic first
+    $(`#ctf-${ctfId}`).remove();    
+    var formData = new FormData();
+    formData.append('id', ctfId);
+    $.ajax({
+       url: '/delete-ctf',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {
+          $(`#ctf-${ctfId}`).remove();
+          console.log(response);
+       } // success: function
+    }); // ajax
+} // deleteToolTrick()
+
+
+function deleteToolTrick(toolTrickId) {
+    // Appending data
+    var formData = new FormData();
+    formData.append('id', toolTrickId);
+    $.ajax({
+       url: '/delete-tool-trick',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          // Frontend logic
+          console.log(response);
+          $(`#${toolTrickId}`).remove();
+       } // success: function
+    }); // ajax
+} // deleteToolTrick()
+
+
+  let idCounter = 0;
+  function toolsAndTricks(ctfId) {
+      $('#addToolTrickBtn').attr('onClick', `addToolTrick('${ctfId}')`);
+
+      // Retrieve existing tools and tricks
+      $("#tool-trick-section").html("");
+      $.ajax({
+         url: `/get-tools-tricks/${ctfId}`,
+         type: 'get',         
+         success: function(response) {          
+              console.log(response.length);
+              let toolTrickStructure;
+              
+              for(let i = 0; i < response.length; i++) {
+                console.log(response)
+                toolTrickStructure = `
+                   <div id="${response[i][0]}" class="commandCard">
+                    <div style="text-align: right;">
+                      
+                      
+                      
+                      <button onclick=copyToClipboard('command-${response[i][0]}')  class="btn btn-floating" type="button">
+                          <i style="font-size: 16px;" class="fas fa-copy"></i>
+                      </button>
+
+                      <div class="dropdown">                        
+                        <button class="btn btn-floating" type="button" id="dropdownMenuButton" data-mdb-toggle="dropdown" aria-expanded="false">
+                          <i style="font-size: 16px;" class="fas fa-pen"></i>                          
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                          <li class="dropdown-li"><a class="dropdown-item" href="#">Edit</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li class="dropdown-li"><a class="dropdown-item" onclick=deleteToolTrick('${response[i][0]}') href="#">Delete</a></li>
+                        </ul>
+                      </div>
+
+                    </div>
+                     <div>
+                       <div>
+                         <pre id="command-${response[i][0]}" class="consolas" style="overflow: auto; color: #009933 !important; font-weight: bold !important" spellcheck="false">${response[i][2]}</pre>                    
+                       </div>
+                     </div>
+                     <div style="margin-top: 10px; ">
+                       <p spellcheck="false">
+                         ${response[i][3]}
+                       </p>                  
+                     </div>
+                   </div> 
+                `;       
+                console.log(`'${response[i][2]}'`);         
+                var dragged = new DOMParser().parseFromString(toolTrickStructure, 'text/xml');
+                var rootNode = document.getElementById("tool-trick-section");
+                rootNode.insertAdjacentHTML('beforeend', toolTrickStructure); 
+              } // for
+         } // success: function
+      });
+
+
+
+    toolsAndTricksModal.show()
+  }
+
+  function addNewToolAndTrick() {
+    let codeStructure = `
+              <div style="margin-top: 1rem; padding: 1rem; border-radius: 10px; background-color: #0d0d0d;">                                
+                <div>
+                  <div class="form-outline" style="text-align: right;">
+                    <input id="tool-or-trick${idCounter}" placeholder="Command, oneliner or trick" class="consolas form-control" style="color: #009933 !important; font-weight: bold !important; border: 1px solid gray;" spellcheck="false" />                    
+                  </div>
+                </div>
+                <div class="form-outline" style="margin-top: 20px; ">
+                  <textarea style="border: 1px solid gray;" placeholder="Trick's description" class="form-control" spellcheck="false" id="tool-trick-description${idCounter}" rows="2"></textarea>                  
+                  <label class="form-label" for="tool-trick-description${idCounter}">CTF Name</label>
+                </div>
+              </div>
+    `;
+
+        var dragged = new DOMParser().parseFromString(codeStructure, 'text/xml');
+        var rootNode = document.getElementById("toolsAndTricksForm");
+        rootNode.insertAdjacentHTML('beforeend', codeStructure); 
+
+
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+          new mdb.Input(formOutline).init();
+        });      
+
+
+  }
+
+
+  function addToolTrick(ctfId) {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('command', $('#tool-or-trick').val());
+    formData.append('description', $('#tool-trick-description').val());
+    formData.append('ctfId', ctfId);    
+
+    $.ajax({
+       url: '/add-tool-trick',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+
+              // Frontend logic
+              let command = $('#tool-or-trick').val();
+              let description = $('#tool-trick-description').val();      
+              $('#tool-or-trick').val('');
+              $('#tool-trick-description').val('');
+              console.log(command);
+              let toolTrickStructure = `
+                  <div class="commandCard">                                
+                    <div>
+                      <div>
+                        <p class="consolas" style="color: #009933 !important; font-weight: bold !important" spellcheck="false">
+                          ${command}
+                        </p>                    
+                      </div>
+                    </div>
+                    <div style="margin-top: 10px; ">
+                      <p spellcheck="false">
+                        ${description}
+                      </p>                  
+                    </div>
+                  </div>
+              `;
+              var dragged = new DOMParser().parseFromString(toolTrickStructure, 'text/xml');
+              var rootNode = document.getElementById("tool-trick-section");
+              rootNode.insertAdjacentHTML('beforeend', toolTrickStructure); 
+
+       } // success: function
+    });    
+  } // addToolTrick
+
+
+  function hideClipboardNotification() {
+    document.querySelector('.clipboard-notification').style.display = 'none';
+  }
+
+  function copyToClipboard(commandId) {    
+    let toCopy = document.querySelector(`#${commandId}`).innerText;        
+    navigator.clipboard.writeText(toCopy);
+    document.querySelector('.clipboard-notification').style.display = 'inline';
+    const myTimeout = setTimeout(hideClipboardNotification, 2000);
+  }
+
+  function ctfUpload() {
+    $('#loadingSpinner').css('display', 'flex');
+    $('#saveCtfBtn').css('display', 'none');
+
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('name', $('#ctf-name').val());
+    formData.append('platform', $('#ctf-platform').val());
+    formData.append('os', $('#ctf-os').val());
+    formData.append('tools', $('#ctf-tools').val());
+    formData.append('techniques', $('#ctf-techniques').val());
+    formData.append('description', $('#ctf-description').val());
+
+    // Appending file
+    var files = $('#ctf-report')[0].files;
+    formData.append('file', files[0]);
+
+    $.ajax({
+       url: '/ctf',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          window.location.replace('/roadmap');
+       }
+    });
+        
+
+  } // ctfUpload
+
+
+   const newCtfModal = new mdb.Modal(document.getElementById('new-ctf-modal'));
+   const updateCtfModal = new mdb.Modal(document.getElementById('updt-ctf-modal'));   
+   const toolsAndTricksModal = new mdb.Modal(document.getElementById('tools-tricks-modal'));   
+
+   console.log('Modal instancer ready ');
+
+
+  var ctfOs = new selecty('#ctf-os');
+  var ctfPlatform = new selecty('#ctf-platform');
+  var updtCtfOs = new selecty('#updt-ctf-os');
+  var updtCtfPlatform = new selecty('#updt-ctf-platform');
+</script>

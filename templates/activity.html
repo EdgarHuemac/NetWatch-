@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network tracking tool</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  
+
+  <!-- MDB-->
+  <!--<link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+<body style="background-color: #fafafa;">
+<br><br>
+
+
+
+<div class="container" style="height: 100px; max-width: 70rem; max-height: 10rem;">
+      <div class="container">
+          <div class="card shadow-5-strong">
+            <div class="card-body" style="text-align: center;">
+              <h3 id="activity-title"></h3>
+
+              <div id="chart-spinner" style="text-align: center; display: block;">                
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>              
+              </div>
+              <p id="network-presence-porcentage" style="color: #939393; font-size: 18px;"></p>
+                
+              <div style="text-align: left; margin-left: 2rem;">                
+                <button id="reset-zoom-btn" type="button" onclick="resetZoom()" class="btn btn-outline-primary" data-mdb-ripple-color="dark" style="display: none;">
+                   Reset zoom
+                 </button>                          
+              </div>
+                           
+              <canvas id="activityChart" width="200" height="55"></canvas>
+
+            </div>
+          </div>  
+      </div>  
+</div>
+
+
+        
+
+
+
+</body>  
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/hammer.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/chart-plugin-zoom.min.js') }}"></script>
+
+<script type="text/javascript" defer="">
+let CHART_LABELS = [];
+let CHART_DATA = [];
+
+let NETWORK_PRESENCE = 0;
+let NETWORK_PRESENCE_PORCENTAGE; 
+$( document ).ready(function() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const networkHost = urlParams.get('h');
+  $('#activity-title').text(`Activity of ${networkHost}`)
+  console.log(networkHost);
+  $.ajax({ 
+      type: 'GET', 
+      url: `/get-activity/${networkHost}`,       
+      dataType: 'json',
+      success: function (hostActivity) { 
+          console.log(hostActivity);
+          for(let i = 0; i < hostActivity.length; i++) {
+            CHART_LABELS.push(hostActivity[i].time);
+            CHART_DATA.push(hostActivity[i].state);
+            if(hostActivity[i].state == '1') {
+              NETWORK_PRESENCE += 1;
+            }
+          }
+
+          console.log(`NETWORK_PRESENCE_PORCENTAGE = (${hostActivity.length} / ${NETWORK_PRESENCE}) * 100`);
+          NETWORK_PRESENCE_PORCENTAGE = (NETWORK_PRESENCE / hostActivity.length) * 100;
+
+          // Constructing the chart
+          const ctx = document.getElementById('activityChart').getContext('2d');
+          const data = {
+            // The labels will be the time of each network scan
+            labels: CHART_LABELS,
+            datasets: [
+              {
+                label: 'Dataset',
+                // The data will be the host's state for each network scan
+                data: CHART_DATA,
+                borderColor: 'rgb(52, 110, 235)',
+                fill: false,
+                stepped: true,
+              }
+            ]
+          };
+
+          const myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+              responsive: true,
+              interaction: {
+                intersect: false,
+                axis: 'x'
+              },
+              plugins: {
+                title: {
+                  display: true,
+                  //text: (ctx) => 'Step ' + ctx.chart.data.datasets[0].stepped + ' Interpolation',
+                }, 
+                zoom: {
+                  zoom: {
+                    wheel: {
+                      enabled: true,
+                    },
+                    pinch: {
+                      enabled: true
+                    },
+                    mode: 'xy',
+                  }
+                }
+              }
+            }
+          });
+          window.activityChart = myChart;
+
+        $('#chart-spinner').css('display', 'none');
+        $('#reset-zoom-btn').css('display', 'block');
+        $('#network-presence-porcentage').text(`Network presence: ${String(NETWORK_PRESENCE_PORCENTAGE).substring(0, 8)} %`);
+
+
+
+      }
+  });  // ajax
+});  // document.ready
+
+function resetZoom() {
+  window.activityChart.resetZoom();
+}
+
+</script>
+
+<script type="text/javascript" defer>
+
+</script>

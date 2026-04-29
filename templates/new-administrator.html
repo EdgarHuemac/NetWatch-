@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditor&iacute;a Superior del Estado de Michoac&aacute;n</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/all.min.css') }}">
+
+
+  <!-- MDB-->
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+
+<br><br>
+<div class="container text-center">
+  
+
+
+
+
+<br/><br/><br/>
+<div class="container" style="width: 25rem;">
+  <div class="card shadow-5-strong">    
+    
+    <div class="card-body">
+      <h3 class="card-title"><a>Registrar nuevo administrador</a></h3><br/>
+      <form>
+        
+        <!-- Usuario input-->
+        <div class="form-outline mb-4">
+          <input class="form-control" id="admin-nombre" type="text" name="name"/>
+          <label class="form-label" for="admin-nombre">Nombre completo:</label>
+        </div>
+
+        <!-- Usuario input-->
+        <div class="form-outline mb-4">
+          <input class="form-control" id="admin-username" type="text" name="username"/>
+          <label class="form-label" for="admin-username">Usuario:</label>
+        </div>
+
+        <!-- Usuario input-->
+        <div class="form-outline mb-4">
+          <input class="form-control" id="admin-password" type="password" name="password"/>
+          <label class="form-label" for="admin-password">Contraseña:</label>
+        </div>
+        <!-- Password input-->
+        <div class="form-outline mb-4">
+          <input class="form-control" id="admin-password2" type="password" name="password2"/>
+          <label class="form-label" for="admin-password2">Repetir contraseña</label>
+        </div><br/>
+        <button onclick="registerAdministrator()" style="width: 10rem; margin: 0 auto; background-color: #4A001F; color: white; " class="btn btn-primary btn-block" type="button">Registrar usuario</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+ <div class="container">
+          <div class="card shadow-5-strong">
+            <div class="card-body">
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" style="font-weight: bold;">Nombre</th>
+                    <th scope="col" style="font-weight: bold;">Usuario</th>
+                    <th scope="col" style="font-weight: bold;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% block content %}  
+                    {% for administrator in administrators %}
+                      <tr>
+                        <td>{{ administrator['Name'] }}</td>                        
+                        <td>{{ administrator['Username'] }}</td>
+                        <td>
+                          <a href="#" onclick="eliminarAdmin('{{ administrator['Id'] }}')">Eliminar</a>
+                        </td>
+                      </tr>
+
+                  {% endfor %}
+                {% endblock %}    
+                      
+                  
+                </tbody>
+              </table>
+
+            </div>
+          </div>  
+      </div>
+
+ 
+
+
+
+
+
+</div> <!-- Container -->
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript">
+   function registerAdministrator() {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('adminName', $('#admin-nombre').val());
+    formData.append('adminUsername', $('#admin-username').val());
+    formData.append('adminPassword', $('#admin-password').val());
+    formData.append('adminPassword2', $('#admin-password2').val());
+
+
+    $.ajax({
+       url: '/register-administrator',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+       } // success: function
+    });    
+    window.location.reload();
+  } // addT
+</script>

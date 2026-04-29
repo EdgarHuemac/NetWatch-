@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network tracking tool</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  
+
+  <!-- MDB-->
+  <!--<link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+<body style="background-color: #fafafa;">
+<br><br>
+
+
+
+<div style="height: 100px; padding: 3rem; margin-top: -3rem;">
+      <div>
+          <div class="card shadow-5-strong">
+            <div class="card-body">
+              <h3>Scans done today</h3>
+              <p>14/11/2022</p>
+
+              <div style="padding-bottom: 2rem;">                
+
+              <div style="text-align: left; margin-left: 2rem;">                
+                <button id="reset-zoom-btn" type="button" onclick="resetZoom()" class="btn btn-outline-primary" data-mdb-ripple-color="dark" style="display: none;">
+                   Reset zoom
+                 </button>                          
+              </div>
+
+                <canvas id="networkActivityChart" width="200" height="50"></canvas>
+              </div>
+
+              <table class="table">
+                <thead>
+                  <tr>                    
+                    <th scope="col" style="font-weight: bold;">ID</th>
+                    <th scope="col" style="font-weight: bold;">Date</th>
+                    <th scope="col" style="font-weight: bold;">Time</th>
+                    <th scope="col" style="font-weight: bold;">Agent</th>
+                    <th scope="col" style="font-weight: bold;">Alive hosts</th>
+                    <th scope="col" style="font-weight: bold;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% block content %}  
+                    {% for scan in scans %}
+                      <tr>
+                        <td>{{ scan['Id'] }}</td>
+                        <td>{{ scan['Date'] }}</td>
+                        <td>{{ scan['Time'] }}</td>
+                        <td>{{ scan['AgentId'] }}</td> 
+                        <td>{{ scan['AliveHosts'] }}</td> 
+                        <td>
+                          <button type="button" onclick="getScanResults('{{ scan['Id'] }}', '{{ scan['Time'] }}')" class="btn btn-outline-primary" data-mdb-ripple-color="dark">
+                            See results
+                          </button>                          
+                        </td> 
+                                               
+
+                      </tr>
+
+                  {% endfor %}
+                {% endblock %}    
+                      
+                  
+                </tbody>
+              </table>
+
+            </div>
+          </div>  
+      </div>  
+</div>
+
+
+<!-- Scans modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 style="color: #5092ff;" class="modal-title" id="modal-title"></h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      
+            <table class="table">
+              <thead>
+                <tr>                  
+                  <th scope="col">IP</th>
+                  <th scope="col">MAC</th>
+                  <th scope="col">Vendor</th>
+                </tr>
+              </thead>
+              <tbody id="scanResultsTableBody">
+                
+              </tbody>
+            </table>
+
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+        
+
+
+
+</body>  
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/hammer.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/chart-plugin-zoom.min.js') }}"></script>
+<script type="text/javascript">
+  function getScanResults(scanId, scanHour) {
+
+  $.ajax({ 
+      type: 'GET', 
+      url: `/scan-results-from-scan/${scanId}`,       
+      dataType: 'json',
+      success: function (scanResults) { 
+          console.log(scanResults);
+          console.log(scanResults.length);
+          $('#scanResultsTableBody').html('')
+          for (var i = 0; i < scanResults.length; i++) {
+                var scanResultStructure = `
+                  <tr>                    
+                    <td style="padding: 3px !important;">${scanResults[i][2]}</td>
+                    <td style="padding: 3px !important;">
+                      <a href="/activity?h=${scanResults[i][3]}">${scanResults[i][3]}</a>                      
+                    </td>
+                    <td style="padding: 3px !important;">${scanResults[i][4]}</td>
+                  </tr>
+                `;
+                console.log(scanResultStructure);
+
+            var dragged = new DOMParser().parseFromString(scanResultStructure, 'text/xml');
+            var rootNode = document.getElementById("scanResultsTableBody");
+            rootNode.insertAdjacentHTML('beforeend', scanResultStructure);   
+
+          } // for          
+      } // success
+  }); 
+
+    $('#modal-title').text(`Devices detected in the scan made at ${scanHour} hrs`);
+    $('#exampleModal').modal('show');
+  }
+</script>
+<script type="text/javascript">
+   function registerCode() {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('userName', $('#user-name').val());
+    formData.append('userMac', $('#user-mac').val());
+    formData.append('userIp', $('#user-ip').val());
+
+    $.ajax({
+       url: '/register-user',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+       } // success: function
+    });    
+  } // addToolTrick
+</script>
+
+
+<script type="text/javascript">
+let CHART_LABELS = [];
+let CHART_DATA = [];
+$( document ).ready(function() {
+  $.ajax({ 
+      type: 'GET', 
+      url: `/get-network-history`,       
+      dataType: 'json',
+      success: function (networkActivity) { 
+          console.log(networkActivity);
+          for(let i = 0; i < networkActivity.length; i++) {
+            CHART_LABELS.push(networkActivity[i][0]);            
+            CHART_DATA.push(networkActivity[i][1]);
+          }
+
+          // Constructing the chart
+          const ctx = document.getElementById('networkActivityChart').getContext('2d');
+          const data = {
+            // The labels will be the time of each network scan
+            labels: CHART_LABELS,
+            datasets: [
+              {
+                label: 'Dataset',
+                // The data will be the host's state for each network scan
+                data: CHART_DATA,
+                borderColor: 'rgb(52, 110, 235)',
+                fill: false,
+                tension: 0.1,                
+              }
+            ]
+          };
+
+          const myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+              responsive: true,
+              interaction: {
+                intersect: false,
+                axis: 'x'
+              },
+              plugins: {
+                  title: {
+                    display: true,
+                    //text: (ctx) => 'Step ' + ctx.chart.data.datasets[0].stepped + ' Interpolation',
+                  }, 
+                  zoom: {
+                    zoom: {
+                      wheel: {
+                        enabled: true,
+                      },
+                      pinch: {
+                        enabled: true
+                      },
+                      mode: 'xy',
+                    }
+                }
+              },               
+            }
+          });
+
+
+          window.activityChart = myChart;
+          $('#reset-zoom-btn').css('display', 'block');
+
+
+      }
+  });  // ajax
+});  // document.ready
+
+function resetZoom() {
+  window.activityChart.resetZoom();
+}
+
+</script>
+
+
+<script type="text/javascript">
+    
+</script>

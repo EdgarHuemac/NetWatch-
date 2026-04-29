@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network tracking tool</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  
+
+  <!-- MDB-->
+  <!--<link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+<body style="background-color: #fafafa;">
+<br><br>
+
+
+
+<div class="container" style="height: 100px;">
+      <div class="container">
+          <div class="card shadow-5-strong">
+            <div class="card-body">
+              <h3>All scan results</h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col" style="font-weight: bold;">Id</th>
+                    <th scope="col" style="font-weight: bold;">ScanId</th>
+                    <th scope="col" style="font-weight: bold;">IP</th>
+                    <th scope="col" style="font-weight: bold;">MAC</th>
+                    <th scope="col" style="font-weight: bold;">Vendor</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {% block content %}  
+                    {% for scan_result in scan_results %}
+                      <tr>
+                        <td>{{ scan_result['Id'] }}</td>
+                        <td>{{ scan_result['ScanId'] }}</td>
+                        <td>{{ scan_result['Ip'] }}</td>
+                        <td>
+                          <a href="/activity?h={{scan_result['Mac']}}" data-mdb-toggle="tooltip" title="See network activity for {{scan_result['Mac']}}">                            
+                            {{ scan_result['Mac'] }}
+                          </a>
+                        </td>
+                        <td>{{ scan_result['Vendor'] }}</td>
+
+                      </tr>
+
+                  {% endfor %}
+                {% endblock %}    
+                      
+                  
+                </tbody>
+              </table>
+
+            </div>
+          </div>  
+      </div>  
+</div>
+
+
+
+
+
+        
+
+
+
+</body>  
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript">
+   function registerCode() {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('userName', $('#user-name').val());
+    formData.append('userMac', $('#user-mac').val());
+    formData.append('userIp', $('#user-ip').val());
+
+    $.ajax({
+       url: '/register-user',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+       } // success: function
+    });    
+  } // addToolTrick
+</script>

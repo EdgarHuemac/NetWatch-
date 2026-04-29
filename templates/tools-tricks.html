@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacking roadmap</title>
+  <!-- Google Fonts-->
+  <!-- Font Awesome-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/all.min.css') }}">
+
+
+  <!-- MDB-->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mdb.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/selecty.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/main.css') }}">
+
+</head>
+{% include 'navbar.html' %}
+
+<br><br>
+<div class="container">
+  
+
+  <div id="copied-notification" style="
+    background-color: #000000; 
+    border: 1px solid #353535; 
+    padding: 1rem; 
+    border-radius: 10px; 
+    width: 15rem;
+    position: fixed; 
+    z-index: 15; 
+    top: 1rem;     
+    text-align: center;
+    display: none;
+  ">
+    <p style="color: #15ec45; font-size: 18px;  font-weight: bold; margin-bottom: 0px;">
+      Copied to clipboard!
+    </p>
+  </div>
+
+
+  
+
+
+  <h1 style="color: #7C7C7C;">Tools and tricks</h1><br>
+
+        <div class="row" style="text-align: right; margin-bottom: 1.5rem;">
+
+          <div class="input-group rounded col-md">
+            <span class="input-group-text border-0" id="search-addon">
+              <i style="font-size: 22px;" class="fas fa-search"></i>
+            </span>
+            <input id="searchInput" style="max-width: 30rem;" type="search" spellcheck="false" class="searchInput form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+          </div>
+        </div>
+
+
+        <a class="btn btn-dark" style="margin-bottom: 5px; margin-top: 5px;" href="#!" onclick="newTrickModal.show();" role="button">
+              <i class="fas fa-plus"></i>
+              <span style="margin-left: 5px;">New trick</span>
+            </a>
+
+
+
+        
+
+        <ul id="matchKey">
+        {% block content %}  
+            {% for tool_trick in tools_tricks %}
+
+                  <li class="card" style="background-color: #000000; border: 1px solid #353535; margin-bottom: 1rem;">                    <div class="card-body">               
+                        <div class="row">
+                          <div class="col-md-11">      
+                              <pre id="command-{{ tool_trick['Id'] }}" class="consolas" style="overflow: auto; color: #009933 !important; font-weight: bold !important" spellcheck="false">{{ tool_trick['Command'] }}</pre> 
+                  
+                              <p class="description" id="description-{{ tool_trick['Id'] }}" spellcheck="false">
+                                  {{ tool_trick['Description'] }}
+                              </p>                  
+                          </div>
+                          <div class="col-md-1" style="text-align: right;">
+                              <button onclick=copyToClipboard('command-{{ tool_trick['Id'] }}')  class="btn btn-floating" type="button">
+                                  <i style="font-size: 16px;" class="fas fa-copy"></i>
+                              </button>          
+                          </div>
+                        </div>
+                    </div>
+                  </li>                            
+
+            {% endfor %}
+        {% endblock %}
+        </ul>
+
+  </div> <!-- Container -->
+
+
+
+
+
+
+
+
+<!-- New trick modal -->
+<div class="modal fade" id="new-tool-trick-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="coloredModal modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add new trick</h5>
+        <button type="button" style="background-color: gray !important;" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="container" style="padding: 2rem;">
+
+
+          <div>    
+                  <div class="container">            
+                    <form id="toolsAndTricksForm">
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; border-radius: 10px; background-color: #0d0d0d; border: 1px solid #292929">                                
+                          <div>
+                            <div class="form-outline" style="text-align: right;">
+                              
+                              <textarea placeholder="Trick" class="form-control consolas" style="color: #009933 !important; font-weight: bold !important" spellcheck="false" id="tool-or-trick" rows="4"></textarea>
+                            </div>
+                          </div>
+                          <div class="form-outline" style="margin-top: 20px; ">
+                            <textarea placeholder="Trick's description" class="form-control" spellcheck="false" id="tool-trick-description" rows="4"></textarea>
+                            <label class="form-label" for="tool-trick-description">Description</label>
+                          </div>
+                        </div>
+
+                    </form>
+
+                    <div style="text-align: right; margin-top: 1rem;">
+                      <button id="addToolTrickBtn" type="button" class="btn btn-dark" onclick="addToolTrick()">Add tool / trick</button>
+                    </div>  
+
+
+                    <div style="text-align: right; margin-top: 1rem; display: none;">
+                      <button id="addToolTrickBtn" type="button" 
+                      style="background-color: gray !important; margin-right: 3rem;" class="btn btn-floating" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Add new tool or trick ">
+                        <i style="font-size: 32px; width: 2rem;" class="fas fa-plus"></i>          
+                      </button>
+                    </div>
+
+                  </div>
+            </div>
+
+
+         </div>   
+      </div>
+      
+      
+
+        <div id="loadingSpinner" style="display: none;" class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- MDB-->
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/mdb.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/jquery-3.6.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename= 'js/selecty.js') }}"></script>
+<script type="text/javascript">
+  
+  function copyToClipboard(commandId) {    
+    let toCopy = document.querySelector(`#${commandId}`).innerText;        
+    navigator.clipboard.writeText(toCopy);
+    document.querySelector('#copied-notification').style.display = 'block';
+    const myTimeout = setTimeout(hideClipboardNotification, 2000);
+  }
+
+
+  function hideClipboardNotification() {
+    document.querySelector('#copied-notification').style.display = 'none';
+  }
+
+
+  $("#searchInput").on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      $("#matchKey li").each(function () {          
+         
+        // First search through command
+         if (this.querySelector('.description').innerText.toLowerCase().search(value) > -1 || this.querySelector('.consolas').innerText.toLowerCase().search(value) > -1) {
+            $(this).show();
+            $(this).prev('.subjectName').last().show();
+         } else {
+            $(this).hide();
+         }
+      });      
+   })
+
+
+
+
+
+  function addToolTrick() {
+    // Backend logic
+    var formData = new FormData();
+
+    // Appending data
+    formData.append('command', $('#tool-or-trick').val());
+    formData.append('description', $('#tool-trick-description').val());
+    formData.append('ctfId', '999999');    
+
+    $.ajax({
+       url: '/add-tool-trick',
+       type: 'post',
+       data: formData,
+       contentType: false,
+       processData: false,
+       success: function(response) {          
+          console.log(response);
+          newTrickModal.hide();
+       } // success: function
+    });    
+  } // addToolTrick
+
+
+
+
+
+const newTrickModal = new mdb.Modal(document.getElementById('new-tool-trick-modal'));
+
+</script>

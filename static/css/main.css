@@ -1,0 +1,237 @@
+body {
+	background-color: #111111;
+
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;	
+}
+
+
+
+
+
+/* width */
+::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+	border: 5px solid gray;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #323232; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #262626; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #1d1d1d; 
+}
+
+
+
+.clipboard-notification {
+	color: #45ec45; 
+	font-size: 16px; 
+	margin-left: 10px; 
+	margin-bottom: -15px; 
+	display: none;
+}
+
+
+p {
+	color: #C0C0C0;
+}
+
+.table {
+	background-color: #111111 !important;
+	color: #C0C0C0;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+tr {
+	border-bottom: 1px solid #252525;
+
+}
+
+.form-label {
+	color: #C0C0C0 !important;
+}
+
+.selecty-options {
+	min-width: 15rem;
+	background-color: black !important;
+	color: white !important;
+}
+.selecty-selected {
+	color: white !important;
+	border-bottom: 1px solid #262626 !important;
+}
+
+.dropdown-menu {
+	background-color: black;
+	border: 1px solid #292929;
+} 
+
+.searchInput {
+	background-color: #111111 !important;
+	color: white !important;
+}
+
+.fileInput {
+	background-color: #111111 !important;
+	color: white !important;
+	border: 1px solid #383838 !important;
+}
+
+.consolas {
+	font-family: Consolas,monaco,monospace; 
+	color: #009933 !important;
+	padding-bottom: 6px;
+}
+
+.form-control {
+	color: white !important;
+}
+
+::placeholder {
+  color: #383838 !important;
+}
+
+.thead {
+	background-color: #111111 !important;
+	color: #C0C0C0;	
+}
+
+html {
+	width: 100%; 
+	color: #C0C0C0;
+}
+
+.loginSection {
+	width: 20rem; 
+}
+
+.coloredModal {
+	background-color: #141414 !important;
+	border: 0px solid red !important;
+}
+
+.closeModal {
+	background-color: #141414 !important;
+}
+
+
+.commandCard {
+	margin-top: 1rem; 
+	padding-top: 0.7rem; 
+	padding-right: 0.5rem; 
+	padding-left: 1.5rem; 
+	padding-bottom: 1px; 
+	border-radius: 10px; 
+	background-color: #0d0d0d;
+	border: 1px solid #292929;
+}
+
+
+/*
+
+.form-notch-leading {
+	border: 0.125rem solid #000000;
+}
+
+.form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: .125rem solid #383838;
+    border-bottom: .125rem solid #383838;
+    border-left: .125rem solid #383838;
+} 
+
+ .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #383838;
+    border-right: .125rem solid #383838;
+    border-bottom: .125rem solid #383838;
+} 
+
+ .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-top: 0;
+    border-bottom: .125rem solid #383838;
+} 
+
+*/
+
+
+
+ 
+	/* unfocused borders and label*/
+
+ .form-outline .form-control~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #262626;
+    border-right: .125rem solid #262626;
+    border-bottom: .125rem solid #262626;
+} 
+
+ .form-outline .form-control~.form-notch .form-notch-middle {
+    border-bottom: .125rem solid #262626;
+    border-top: .125rem solid #262626;
+} 
+	.form-outline .form-control~.form-notch .form-notch-leading {
+    border-top: .125rem solid #262626;
+    border-bottom: .125rem solid #262626;
+    border-left: .125rem solid #262626;
+} 
+
+.form-outline .form-control~.form-label {
+  color: #262626;
+}
+.select-input~.select-arrow {
+  color: #262626;
+}
+
+
+/* focused borders, arrow and label*/
+	.form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: .125rem solid #4395FF;
+    border-bottom: .125rem solid #4395FF;
+    border-left: .125rem solid #4395FF;
+} 
+
+ .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #4395FF;
+    border-right: .125rem solid #4395FF;
+    border-bottom: .125rem solid #4395FF;
+} 
+
+ .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-top: 0;
+    border-bottom: .125rem solid #4395FF;
+} 
+
+.form-outline .form-control:focus~.form-label {
+    color: #4395FF;
+}
+.select-input.focused~.select-arrow {
+  color: #4395FF;
+}
+
+
+
+
+
+
